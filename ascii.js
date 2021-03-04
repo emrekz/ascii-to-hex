@@ -1,38 +1,40 @@
 let fromTextLength = 0;
 let fromText;
-let toResult = [];
+let asciiToHexResult, hexToAsciiResult;
 let status = 'asciiToHex';
+let separatorString = '';
 
 const convert = (status) => {
-	document.getElementById("resultLabel").innerHTML = '';
-	fromText = document.getElementById("fromText").value;
+	document.getElementById('resultLabel').innerHTML = '';
+	fromText = document.getElementById('fromText').value;
 	fromText = String(fromText);
 	fromTextLength = fromText.length;
+	separator();
 
 	if(status === 'asciiToHex'){
-		for(let i = 0; i<fromTextLength;i++){
-			toResult[i] = fromText.charCodeAt(i).toString(16);
-			document.getElementById("resultLabel").innerHTML += '' + toResult[i] + ' ';
-		}
+		asciiToHexResult = fromText.match(/.{1}/g).map((i) => {
+			return i.charCodeAt(0).toString(16);
+		}).join(separatorString);
+		document.getElementById('resultLabel').innerHTML += asciiToHexResult;
 	}
 
 	else if(status === 'hexToAscii'){
-		let hexAsciiResult = fromText.match(/.{1,2}/g).map((i) => {
+		hexToAsciiResult = fromText.match(/.{1,2}/g).map((i) => {
 			return String.fromCharCode(parseInt(i,16));
-		}).join('');
-		document.getElementById("resultLabel").innerHTML += '' + hexAsciiResult + ' ';
+		}).join(separatorString);
+		document.getElementById('resultLabel').innerHTML += hexToAsciiResult;
 	}
 
-	document.getElementById("copiedBadge").style.visibility = 'hidden';
-	document.getElementById("copiedBadge").style.opacity = '0';
-	document.getElementById("copyToClipboardButton").removeAttribute('disabled');
+	document.getElementById('copiedBadge').style.visibility = 'hidden';
+	document.getElementById('copiedBadge').style.opacity = '0';
+	document.getElementById('copyToClipboardButton').removeAttribute('disabled');
 }
 
 const copyToClipboard = () => {
-	document.getElementById("resultLabel").select();
-    document.execCommand("copy");
-    document.getElementById("copiedBadge").style.visibility = 'visible';
-    document.getElementById("copiedBadge").style.opacity = '1';
+	document.getElementById('resultLabel').select();
+    document.execCommand('copy');
+    document.getElementById('copiedBadge').style.visibility = 'visible';
+    document.getElementById('copiedBadge').style.opacity = '1';
 }
 
 
@@ -57,13 +59,27 @@ const swap = () => {
 	else { status = 'hexToAscii' }
 }
 
-const clearContent = () => {
-	document.getElementById("fromText").value = '';
-	document.getElementById("resultLabel").innerHTML = '';
+const separator = () => {
+	let currentSeparator = document.getElementById('separator').value;
+	if(currentSeparator === 'none'){
+		separatorString = '';
+	}
+	else if(currentSeparator === 'dot'){
+		separatorString = '.';
+	}
+	else if(currentSeparator === 'comma'){
+		separatorString = ',';
+	}
+	else{currentSeparator = 'none'}
 }
 
-document.getElementById("fromText").addEventListener("change", () => {
-	document.getElementById("copyToClipboardButton").setAttribute('disabled', '');
-	document.getElementById("copiedBadge").style.visibility = 'hidden';
-    document.getElementById("copiedBadge").style.opacity = '0';
+const clearContent = () => {
+	document.getElementById('fromText').value = '';
+	document.getElementById('resultLabel').innerHTML = '';
+}
+
+document.getElementById('fromText').addEventListener('change', () => {
+	document.getElementById('copyToClipboardButton').setAttribute('disabled', '');
+	document.getElementById('copiedBadge').style.visibility = 'hidden';
+    document.getElementById('copiedBadge').style.opacity = '0';
 })
